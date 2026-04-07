@@ -66,6 +66,31 @@ def tactic_invocations_reuse_env(server: Server, source: str) -> list[Compilatio
         ]
 
 
+# ─────────────────────── dataset loading ────────────────────────────────────
+
+def load_dataset(path: Path) -> list[dict]:
+    """
+    Load a proof dataset. Supports:
+      - JSONL: one {"name": ..., "proof": ...} per line
+      - JSON:  a top-level array of the same dicts
+    """
+    text = path.read_text()
+    # Try JSON array first
+    try:
+        data = json.loads(text)
+        if isinstance(data, list):
+            return data
+    except json.JSONDecodeError:
+        pass
+    # Fall back to JSONL
+    entries = []
+    for line in text.splitlines():
+        line = line.strip()
+        if line:
+            entries.append(json.loads(line))
+    return entries
+
+
 # ─────────────────────── resume support ──────────────────────────────────────
 
 def load_done_names(output_path: Path) -> set[str]:
@@ -114,13 +139,14 @@ def make_server(project_path: str, request_timeout: int) -> Server:
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Batch-trace a JSON proof dataset to proof graphs",
+        description="Batch-trace a JSONL proof dataset to proof step graphs",
         formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='Input format (JSONL): {"name": "thm_name", "proof": "import ...\\ntheorem ..."}',
     )
-    p.add_argument("dataset_json", help="JSON file — list of {model, proof} dicts")
+    p.add_argument("dataset", help="JSONL or JSON file of proofs (each with 'proof' key)")
     p.add_argument("--output",   default=None)
     p.add_argument("--project",  default=None,
-                   help="Lean project root (default: ProofStepGraph dir)")
+                   help="Lean project root (default: repo root)")
     p.add_argument("--timeout",  type=int, default=90,
                    help="Per-request Pantograph timeout in seconds (default: 90)")
     p.add_argument("--limit",    type=int, default=None,
@@ -134,7 +160,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    dataset_path = Path(args.dataset_json).resolve()
+    dataset_path = Path(args.dataset).resolve()
     if not dataset_path.exists():
         print(f"Error: {dataset_path} not found", file=sys.stderr)
         sys.exit(1)
@@ -163,8 +189,7 @@ def main() -> None:
 
     # ── load dataset ──────────────────────────────────────────────────────────
     print("[trace_dataset] Loading dataset…")
-    with dataset_path.open() as f:
-        dataset = json.load(f)
+    dataset = load_dataset(dataset_path)
     print(f"[trace_dataset] {len(dataset)} proofs loaded")
 
     if args.limit:
@@ -194,7 +219,7 @@ def main() -> None:
     try:
         for i, entry in enumerate(dataset):
             proof_text = entry.get("proof", "")
-            name = extract_theorem_name(proof_text) or f"proof_{i}"
+            name = entry.get("name") or extract_theorem_name(proof_text) or f"proof_{i}"
 
             elapsed = time.time() - t_start
             processed = n_ok + n_fail + n_timeout
@@ -245,8 +270,6 @@ def main() -> None:
                     _log_fail(fail_f, name, msg[:200], i)
                     n_fail += 1
 
-                # Server process was killed by Pantograph's timeout/error handling.
-                # Restart it to recover (costs ~2min but prevents cascading failures).
                 if server.proc is None:
                     print(f"\n[trace_dataset] Server died — restarting…", flush=True)
                     try:
@@ -259,7 +282,6 @@ def main() -> None:
             except Exception as e:
                 _log_fail(fail_f, name, str(e)[:200], i)
                 n_fail += 1
-                # If server proc is dead, restart
                 if server.proc is None:
                     print(f"\n[trace_dataset] Server died — restarting…", flush=True)
                     try:
