@@ -1,0 +1,21 @@
+[project]
+name = "proof-step-graph"
+version = "0.1.0"
+description = "Proof graph extraction and analysis using PyPantograph"
+requires-python = ">=3.11"
+dependencies = [
+    "networkx>=3.4",
+    "matplotlib>=3.9",
+    "seaborn>=0.13",
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "pantograph",
+    "pyvis>=0.3.2",
+    "pydot>=4.0.1",
+]
+
+[tool.uv.sources]
+pantograph = { path = "PyPantograph" }
+
+[tool.uv.workspace]
+members = ["."]

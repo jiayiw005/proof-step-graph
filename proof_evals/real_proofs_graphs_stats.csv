@@ -1,0 +1,8 @@
+theorem,n_goals,n_tactics,n_initial_goals,n_terminal_goals,n_edges,max_branching,avg_branching,is_dag
+lean_workbook_29184,3,2,1,1,3,1,0.5,True
+lean_workbook_6556,55,68,1,1,97,2,0.5147058823529411,True
+lean_workbook_plus_14776,3,2,1,1,3,1,0.5,True
+lean_workbook_plus_6875,2,1,1,1,2,1,1.0,True
+lean_workbook_plus_1192,3,2,1,1,3,1,0.5,True
+lean_workbook_36579,61,74,1,1,128,2,0.7297297297297297,True
+lean_workbook_22790,39,40,1,1,74,1,0.85,True
