@@ -63,6 +63,26 @@ Output: `data/<dataset>_graphs.jsonl` + `data/<dataset>_graphs.failures.jsonl`
 
 `--resume` skips already-traced theorems, useful for long runs or crash recovery.
 
+### Trace Mathlib
+
+Walks `.lake/packages/mathlib/Mathlib/**/*.lean` and traces all theorems with server reuse. Requires `lake build` to have been run first (so Mathlib source is available).
+
+```bash
+# Trace a specific Mathlib subpackage
+uv run python trace_mathlib.py --filter Topology
+uv run python trace_mathlib.py --filter Algebra.Group
+
+# Trace all of Mathlib (will take a long time)
+uv run python trace_mathlib.py
+
+# Resume after crash, limit to first 100 files
+uv run python trace_mathlib.py --filter Topology --resume --limit 100
+```
+
+Output: `data/mathlib_<filter>_graphs.jsonl`
+
+Each output entry includes a `source_file` field (e.g., `"Mathlib/Topology/Basic.lean"`) for provenance.
+
 ## Output format
 
 Each line of the output JSONL is a serialized `ProofStepGraph`:
@@ -127,6 +147,7 @@ proof-step-graph/
     parse_lean.py         #   Lean source parser, goal block parser
   trace_file.py           # CLI: trace a single .lean file
   trace_dataset.py        # CLI: batch-trace a JSONL dataset
+  trace_mathlib.py        # CLI: trace Mathlib source files
   proof_evals/            # Analysis & visualization notebooks
   scripts/
     setup.sh              # One-command setup
