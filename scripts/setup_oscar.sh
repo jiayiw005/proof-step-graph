@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 # =============================================================================
-# setup_oscar.sh — Set up ProofGraph on Brown's OSCAR cluster
+# setup_oscar.sh — Set up ProofStepGraph on Brown's OSCAR cluster
 #
 # Run on OSCAR login node (or interactive session):
 #   bash scripts/setup_oscar.sh
 #
 # Assumes:
 #   - lean_setup.sh has already been run (elan + Mathlib ready)
-#   - ProofGraph/ and PyPantograph/ have been rsync'd to $SCRATCH
+#   - ProofStepGraph/ and PyPantograph/ have been rsync'd to $SCRATCH
 #
 # =============================================================================
 
 set -euo pipefail
 
 export SCRATCH_DIR="/users/${USER}/scratch"
-export PROJECT_DIR="${SCRATCH_DIR}/proof_graph"
+export PROJECT_DIR="${SCRATCH_DIR}/proof_step_graph"
 export PYPANTOGRAPH_DIR="${PROJECT_DIR}/PyPantograph"
 
 # ── Lean/elan on scratch ─────────────────────────────────────────────────────
@@ -29,7 +29,7 @@ elif [ -f /etc/ssl/cert.pem ]; then
 fi
 
 echo "============================================"
-echo "  ProofGraph Setup on OSCAR"
+echo "  ProofStepGraph Setup on OSCAR"
 echo "============================================"
 echo "  User:          ${USER}"
 echo "  Project:       ${PROJECT_DIR}"
@@ -77,8 +77,8 @@ uv sync
 echo "  Done."
 echo ""
 
-# ── 4. ProofGraph Lean project ───────────────────────────────────────────────
-echo "[3/3] Building ProofGraph Lean project..."
+# ── 4. ProofStepGraph Lean project ───────────────────────────────────────────────
+echo "[3/3] Building ProofStepGraph Lean project..."
 cd "$PROJECT_DIR"
 
 LEAN_VERSION=$(cat lean-toolchain | tr -d '[:space:]')
@@ -86,7 +86,7 @@ echo "  Toolchain: $LEAN_VERSION"
 elan toolchain install "$LEAN_VERSION" || true
 lake update
 lake exe cache get || true
-lake build ProofGraph || echo "  (lake build failed)"
+lake build ProofStepGraph || echo "  (lake build failed)"
 echo ""
 
 echo "============================================"

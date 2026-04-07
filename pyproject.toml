@@ -1,7 +1,7 @@
 [project]
 name = "proof-step-graph"
 version = "0.1.0"
-description = "Proof graph extraction and analysis using PyPantograph"
+description = "Proof step graph extraction and analysis using PyPantograph"
 requires-python = ">=3.11"
 dependencies = [
     "networkx>=3.4",

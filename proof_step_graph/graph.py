@@ -23,10 +23,10 @@ def tactic_node_id(step: int) -> str:
     return f"t{step}"
 
 
-# ─────────────────────── ProofGraph ──────────────────────────────────────────
+# ─────────────────────── ProofStepGraph ──────────────────────────────────────
 
 @dataclass
-class ProofGraph:
+class ProofStepGraph:
     """
     Bipartite DAG for a single Lean theorem proof.
 
@@ -141,7 +141,7 @@ class ProofGraph:
         }
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ProofGraph":
+    def from_dict(cls, d: dict) -> "ProofStepGraph":
         pg = cls(theorem_name=d["theorem_name"])
         for node in d["nodes"]:
             node = dict(node)
@@ -157,13 +157,13 @@ class ProofGraph:
         Path(path).write_text(json.dumps(self.to_dict(), indent=2, ensure_ascii=False))
 
     @classmethod
-    def load_json(cls, path: str | Path) -> "ProofGraph":
+    def load_json(cls, path: str | Path) -> "ProofStepGraph":
         return cls.from_dict(json.loads(Path(path).read_text()))
 
     def __repr__(self) -> str:
         s = self.stats()
         return (
-            f"ProofGraph({self.theorem_name!r}: "
+            f"ProofStepGraph({self.theorem_name!r}: "
             f"{s['n_goals']} goals, {s['n_tactics']} tactics, "
             f"branch={s['max_branching']})"
         )

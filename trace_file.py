@@ -11,8 +11,8 @@ sys.path.insert(0, str(Path(__file__).parent / "PyPantograph"))
 
 from pantograph.server import Server
 
-from proof_graph.tracer import StaticProofTracer, InteractiveProofTracer
-from proof_graph.parse_lean import extract_theorems
+from proof_step_graph.tracer import StaticProofTracer, InteractiveProofTracer
+from proof_step_graph.parse_lean import extract_theorems
 
 
 def parse_args() -> argparse.Namespace:

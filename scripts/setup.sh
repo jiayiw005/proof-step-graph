@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # =============================================================================
-# setup.sh — Set up the ProofGraph environment
+# setup.sh — Set up the ProofStepGraph environment
 #
-# Run from the ProofGraph/ directory:
+# Run from the ProofStepGraph/ directory:
 #   bash scripts/setup.sh
 #
 # What this does:
 #   1. Build the PyPantograph REPL binary (Lean compilation)
 #   2. Create a Python venv and install dependencies (via uv)
-#   3. Build/fetch cache for the ProofGraph Lean project (Mathlib)
+#   3. Build/fetch cache for the ProofStepGraph Lean project (Mathlib)
 #
 # Prerequisites:
 #   - elan / lean (managed by elan) installed and on PATH
@@ -25,7 +25,7 @@ PYPANTOGRAPH_DIR="${ROOT_DIR}/PyPantograph"
 cd "$ROOT_DIR"
 
 echo "============================================"
-echo "  ProofGraph Setup"
+echo "  ProofStepGraph Setup"
 echo "============================================"
 echo "  Root:         $ROOT_DIR"
 echo "  PyPantograph: $PYPANTOGRAPH_DIR"
@@ -79,7 +79,7 @@ echo "  Python env ready (use: uv run python ...)"
 echo ""
 
 # ── 3. Lean project build (optional, for Mathlib) ───────────────────────────
-echo "[3/3] Building ProofGraph Lean project..."
+echo "[3/3] Building ProofStepGraph Lean project..."
 
 if ! command -v lake &>/dev/null; then
     echo "  WARNING: lake not found, skipping Lean build."
@@ -92,7 +92,7 @@ else
     echo "  Fetching Mathlib cache..."
     lake exe cache get || echo "  (cache fetch failed — lake build may take a while)"
     echo "  Building..."
-    lake build ProofGraph || echo "  (build failed — check lakefile.toml and internet access)"
+    lake build ProofStepGraph || echo "  (build failed — check lakefile.toml and internet access)"
 fi
 echo ""
 
@@ -101,14 +101,14 @@ echo "  Setup Complete!"
 echo "============================================"
 echo ""
 echo "  Trace a Lean file (Init-only, fast):"
-echo "    uv run python trace_file.py ProofGraph/Demo.lean"
+echo "    uv run python trace_file.py ProofStepGraph/Demo.lean"
 echo ""
 echo "  Trace against Mathlib:"
 echo "    uv run python trace_file.py MyFile.lean \\"
 echo "      --project /path/to/mathlib-project --imports Mathlib"
 echo ""
 echo "  Interactive replay mode:"
-echo "    uv run python trace_file.py ProofGraph/Demo.lean --interactive"
+echo "    uv run python trace_file.py ProofStepGraph/Demo.lean --interactive"
 echo ""
 echo "  Analyze output:"
 echo "    uv run python analyze_graphs.py data/Demo_graphs.jsonl"

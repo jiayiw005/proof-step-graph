@@ -7,7 +7,7 @@ Reconstructs full Lean proofs from:
   - gen_Goedel-Prover-V2-8B_pass32.json  (raw model outputs)
 
 For each theorem with ≥1 passing, no-sorry answer: reconstructs the proof,
-runs tactic_invocations, and streams ProofGraphs to JSONL.
+runs tactic_invocations, and streams ProofStepGraphs to JSONL.
 
 Usage:
     PATH="$HOME/.elan/bin:$PATH" uv run python trace_goedel.py \\
@@ -32,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from pantograph.server import Server, ServerError
 from pantograph.data import CompilationUnit
-from proof_graph.tracer import _build_graph_from_invocations
+from proof_step_graph.tracer import _build_graph_from_invocations
 
 STARTUP_TIMEOUT = 600
 

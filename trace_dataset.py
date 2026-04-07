@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from pantograph.server import Server, ServerError
 from pantograph.data import CompilationUnit
-from proof_graph.tracer import _build_graph_from_invocations
+from proof_step_graph.tracer import _build_graph_from_invocations
 
 
 # ─────────────────────── proof pre-processing ────────────────────────────────
@@ -120,7 +120,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("dataset_json", help="JSON file — list of {model, proof} dicts")
     p.add_argument("--output",   default=None)
     p.add_argument("--project",  default=None,
-                   help="Lean project root (default: ProofGraph dir)")
+                   help="Lean project root (default: ProofStepGraph dir)")
     p.add_argument("--timeout",  type=int, default=90,
                    help="Per-request Pantograph timeout in seconds (default: 90)")
     p.add_argument("--limit",    type=int, default=None,

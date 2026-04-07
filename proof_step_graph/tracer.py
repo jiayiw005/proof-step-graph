@@ -10,7 +10,7 @@ from pantograph.expr import GoalState, Goal, Site
 from pantograph.data import TacticInvocation, CompilationUnit
 
 from .graph import (
-    ProofGraph,
+    ProofStepGraph,
     NODE_GOAL, NODE_TACTIC,
     goal_node_id, tactic_node_id,
 )
@@ -31,9 +31,9 @@ def _goal_content_id(target: str, variables: list[str], case_name: Optional[str]
 def _build_graph_from_invocations(
     theorem_name: str,
     invocations: list[TacticInvocation],
-) -> ProofGraph:
+) -> ProofStepGraph:
     """
-    Build a ProofGraph from a flat list of TacticInvocations (static mode).
+    Build a ProofStepGraph from a flat list of TacticInvocations (static mode).
 
     Strategy:
     - Parse before/after strings into lists of per-goal dicts.
@@ -42,7 +42,7 @@ def _build_graph_from_invocations(
       the first goal).
     - New goals (in after but not in before, matched by content) are output edges.
     """
-    pg = ProofGraph(theorem_name=theorem_name)
+    pg = ProofStepGraph(theorem_name=theorem_name)
 
     # Register goal content → node_id for deduplication
     registered: dict[str, str] = {}
@@ -111,10 +111,10 @@ class StaticProofTracer:
     def __init__(self, server: Server):
         self.server = server
 
-    def trace_file(self, lean_file: str | Path) -> list[ProofGraph]:
+    def trace_file(self, lean_file: str | Path) -> list[ProofStepGraph]:
         """
         Trace every compilation unit in `lean_file` that has tactic invocations.
-        Returns one ProofGraph per unit (theorem).  Units without tactic blocks
+        Returns one ProofStepGraph per unit (theorem).  Units without tactic blocks
         (e.g. definitions) are skipped.
         """
         units: list[CompilationUnit] = self.server.tactic_invocations(str(lean_file))
@@ -132,7 +132,7 @@ class StaticProofTracer:
         self,
         lean_file: str | Path,
         theorems: list,
-    ) -> list[ProofGraph]:
+    ) -> list[ProofStepGraph]:
         """
         Like trace_file but assigns theorem names by matching CompilationUnit
         byte offsets to LeanTheorem.byte_offset.
@@ -188,7 +188,7 @@ class ReplayStep:
 
 class InteractiveProofTracer:
     """
-    Replay a known proof interactively to obtain a structured ProofGraph.
+    Replay a known proof interactively to obtain a structured ProofStepGraph.
 
     Goal nodes are keyed by Goal.id (Lean metavar name), giving exact identity
     across steps and correct sibling/dependency edges.
@@ -252,9 +252,9 @@ class InteractiveProofTracer:
         name: str,
         steps: list[ReplayStep],
         initial_state: Optional[GoalState] = None,
-    ) -> ProofGraph:
+    ) -> ProofStepGraph:
         """
-        Build a ProofGraph from a list of ReplaySteps.
+        Build a ProofStepGraph from a list of ReplaySteps.
 
         Goal node IDs are Goal.id (metavar names).
         Edge structure:
@@ -262,7 +262,7 @@ class InteractiveProofTracer:
           tactic_node → new_goal.id       (EDGE_OUTPUT) for each goal that
                                           appears in after but not in before.
         """
-        pg = ProofGraph(theorem_name=name)
+        pg = ProofStepGraph(theorem_name=name)
 
         def ensure_goal(goal: Goal, is_initial: bool = False) -> None:
             if goal.id not in pg.G:
@@ -310,7 +310,7 @@ class InteractiveProofTracer:
         theorem_type: str,
         tactics: list[str],
         used_constants: Optional[list[list[str]]] = None,
-    ) -> ProofGraph:
+    ) -> ProofStepGraph:
         """Convenience: replay then build graph."""
         steps = self.replay(theorem_type, tactics, used_constants)
         return self.build_graph(name, steps)

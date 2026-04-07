@@ -1,4 +1,4 @@
--- Demo.lean — Sample theorems for ProofGraph tracing.
+-- Demo.lean — Sample theorems for ProofStepGraph tracing.
 --
 -- These are deliberately simple so they can be traced against `Init` (no Mathlib).
 -- They exercise the key graph structures we care about:

@@ -11,20 +11,20 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent))
-from proof_graph.graph import ProofGraph, NODE_GOAL, NODE_TACTIC
+from proof_step_graph.graph import ProofStepGraph, NODE_GOAL, NODE_TACTIC
 
 
-def load_graphs(jsonl_path: Path) -> list[ProofGraph]:
+def load_graphs(jsonl_path: Path) -> list[ProofStepGraph]:
     graphs = []
     with jsonl_path.open() as f:
         for line in f:
             line = line.strip()
             if line:
-                graphs.append(ProofGraph.from_dict(json.loads(line)))
+                graphs.append(ProofStepGraph.from_dict(json.loads(line)))
     return graphs
 
 
-def compute_stats(graphs: list[ProofGraph]) -> pd.DataFrame:
+def compute_stats(graphs: list[ProofStepGraph]) -> pd.DataFrame:
     rows = [pg.stats() for pg in graphs]
     return pd.DataFrame(rows)
 
@@ -51,7 +51,7 @@ def plot_distributions(df: pd.DataFrame, out_dir: Path) -> None:
         ax.set_xlabel("value")
         ax.set_ylabel("count")
     fig.tight_layout()
-    path = out_dir / "proof_graph_distributions.pdf"
+    path = out_dir / "proof_step_graph_distributions.pdf"
     fig.savefig(path)
     print(f"[analyze] Saved → {path}")
     plt.close(fig)
@@ -65,13 +65,13 @@ def plot_branching_vs_depth(df: pd.DataFrame, out_dir: Path) -> None:
     ax.set_ylabel("max branching factor")
     ax.set_title("Branching vs Depth")
     fig.tight_layout()
-    path = out_dir / "proof_graph_branching_depth.pdf"
+    path = out_dir / "proof_step_graph_branching_depth.pdf"
     fig.savefig(path)
     print(f"[analyze] Saved → {path}")
     plt.close(fig)
 
 
-def tactic_frequency(graphs: list[ProofGraph], top_n: int = 20) -> Counter:
+def tactic_frequency(graphs: list[ProofStepGraph], top_n: int = 20) -> Counter:
     counter: Counter = Counter()
     for pg in graphs:
         for _, d in pg.tactic_nodes():
@@ -81,7 +81,7 @@ def tactic_frequency(graphs: list[ProofGraph], top_n: int = 20) -> Counter:
     return counter
 
 
-def plot_tactic_freq(graphs: list[ProofGraph], out_dir: Path, top_n: int = 20) -> None:
+def plot_tactic_freq(graphs: list[ProofStepGraph], out_dir: Path, top_n: int = 20) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     freq = tactic_frequency(graphs, top_n)
     top = freq.most_common(top_n)
@@ -93,7 +93,7 @@ def plot_tactic_freq(graphs: list[ProofGraph], out_dir: Path, top_n: int = 20) -
     ax.set_title(f"Top-{top_n} tactic names")
     ax.invert_yaxis()
     fig.tight_layout()
-    path = out_dir / "proof_graph_tactic_freq.pdf"
+    path = out_dir / "proof_step_graph_tactic_freq.pdf"
     fig.savefig(path)
     print(f"[analyze] Saved → {path}")
     plt.close(fig)

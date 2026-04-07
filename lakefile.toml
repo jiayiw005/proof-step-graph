@@ -1,8 +1,8 @@
-name = "ProofGraph"
-defaultTargets = ["ProofGraph"]
+name = "ProofStepGraph"
+defaultTargets = ["ProofStepGraph"]
 
 [[lean_lib]]
-name = "ProofGraph"
+name = "ProofStepGraph"
 
 [leanOptions]
 autoImplicit = false

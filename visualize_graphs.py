@@ -16,7 +16,7 @@ import networkx as nx
 from pyvis.network import Network
 
 sys.path.insert(0, str(Path(__file__).parent))
-from proof_graph.graph import ProofGraph, NODE_GOAL, NODE_TACTIC, EDGE_INPUT, EDGE_OUTPUT
+from proof_step_graph.graph import ProofStepGraph, NODE_GOAL, NODE_TACTIC, EDGE_INPUT, EDGE_OUTPUT
 
 
 # ─────────────────────── colours / styles ────────────────────────────────────
@@ -80,7 +80,7 @@ def _hierarchical_pos(G: nx.DiGraph, root_nodes: list[str]) -> dict[str, tuple[f
 
 # ─────────────────────── pyvis HTML ──────────────────────────────────────────
 
-def save_html(pg: ProofGraph, path: Path, max_label: int = 40) -> None:
+def save_html(pg: ProofStepGraph, path: Path, max_label: int = 40) -> None:
     net = Network(
         height="750px", width="100%",
         directed=True,
@@ -158,7 +158,7 @@ def save_html(pg: ProofGraph, path: Path, max_label: int = 40) -> None:
 
     # Write HTML with title
     html = net.generate_html()
-    header = f"<title>ProofGraph: {pg.theorem_name}</title>"
+    header = f"<title>ProofStepGraph: {pg.theorem_name}</title>"
     html = html.replace("<head>", f"<head>\n{header}\n", 1)
     path.write_text(html)
 
@@ -181,7 +181,7 @@ def _dot_layout(G: nx.DiGraph) -> dict[str, tuple[float, float]]:
     return _hierarchical_pos(G, roots)
 
 
-def save_static(pg: ProofGraph, path: Path, max_label: int = 40) -> None:
+def save_static(pg: ProofStepGraph, path: Path, max_label: int = 40) -> None:
     G = pg.G
     if G.number_of_nodes() == 0:
         return
@@ -246,14 +246,14 @@ def save_static(pg: ProofGraph, path: Path, max_label: int = 40) -> None:
 
 # ─────────────────────── main ────────────────────────────────────────────────
 
-def load_graphs(jsonl_path: Path, names: list[str] | None = None) -> list[ProofGraph]:
+def load_graphs(jsonl_path: Path, names: list[str] | None = None) -> list[ProofStepGraph]:
     graphs = []
     with jsonl_path.open() as f:
         for line in f:
             line = line.strip()
             if not line:
                 continue
-            pg = ProofGraph.from_dict(json.loads(line))
+            pg = ProofStepGraph.from_dict(json.loads(line))
             if names is None or pg.theorem_name in names:
                 graphs.append(pg)
     return graphs
