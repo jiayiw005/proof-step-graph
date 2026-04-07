@@ -127,10 +127,9 @@ proof-step-graph/
     parse_lean.py         #   Lean source parser, goal block parser
   trace_file.py           # CLI: trace a single .lean file
   trace_dataset.py        # CLI: batch-trace a JSONL dataset
-  proof_evals/            # Analysis & visualization scripts (WIP)
+  proof_evals/            # Analysis & visualization notebooks
   scripts/
     setup.sh              # One-command setup
-    setup_oscar.sh        # Setup for Brown OSCAR cluster
   PyPantograph/           # Git submodule — Lean 4 REPL server
   lakefile.toml           # Lean project config (pins Mathlib version)
   pyproject.toml          # Python project config

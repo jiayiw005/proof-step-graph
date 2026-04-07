@@ -19,9 +19,8 @@ PyPantograph/pantograph/pantograph-repl
 
 # Data (traced outputs — large, generated locally)
 data/
-proof_evals/*.pdf
-proof_evals/*.csv
-proof_evals/viz/
+# Notebook outputs (strip before committing)
+proof_evals/.ipynb_checkpoints/
 
 # OS
 .DS_Store
