@@ -706,7 +706,7 @@ wheels = [
 [[package]]
 name = "pantograph"
 version = "0.3.13"
-source = { directory = "../PyPantograph" }
+source = { directory = "PyPantograph" }
 
 [package.metadata]
 
@@ -838,7 +838,7 @@ wheels = [
 ]
 
 [[package]]
-name = "proof-graph"
+name = "proof-step-graph"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
@@ -858,7 +858,7 @@ requires-dist = [
     { name = "networkx", specifier = ">=3.4" },
     { name = "numpy", specifier = ">=2.0" },
     { name = "pandas", specifier = ">=2.2" },
-    { name = "pantograph", directory = "../PyPantograph" },
+    { name = "pantograph", directory = "PyPantograph" },
     { name = "pydot", specifier = ">=4.0.1" },
     { name = "pyvis", specifier = ">=0.3.2" },
     { name = "seaborn", specifier = ">=0.13" },
