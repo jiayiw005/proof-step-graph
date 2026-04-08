@@ -17,9 +17,10 @@ lake-packages/
 PyPantograph/.lake/
 PyPantograph/pantograph/pantograph-repl
 
-# Data (traced outputs — large, generated locally)
+# Data
 data/
-# Notebook outputs (strip before committing)
+logs/
+# Notebook outputs
 proof_evals/.ipynb_checkpoints/
 
 # OS

@@ -61,6 +61,17 @@ def discover_files(mathlib_root: Path, filter_prefix: str | None) -> list[Path]:
 STARTUP_TIMEOUT = 600
 
 
+def _server_dead(server: Server, exc: Exception) -> bool:
+    """Return True if the server process has died or the pipe is broken."""
+    if server.proc is None:
+        return True
+    # asyncio Process uses .returncode (None = still running)
+    if getattr(server.proc, "returncode", None) is not None:
+        return True
+    msg = str(exc).lower()
+    return "pipe" in msg or "eof" in msg or "broken" in msg
+
+
 def make_server(project_path: str, request_timeout: int) -> Server:
     t0 = time.time()
     print(f"[trace_mathlib] Starting Pantograph server with Mathlib...", flush=True)
@@ -257,7 +268,7 @@ def main() -> None:
                 fail_f.flush()
                 n_files_fail += 1
 
-                if server.proc is None:
+                if _server_dead(server, e):
                     print(f"\n[trace_mathlib] Server died — restarting...", flush=True)
                     try:
                         server = make_server(args.project, args.timeout)
@@ -271,7 +282,7 @@ def main() -> None:
                 fail_f.flush()
                 n_files_fail += 1
 
-                if server.proc is None:
+                if _server_dead(server, e):
                     print(f"\n[trace_mathlib] Server died — restarting...", flush=True)
                     try:
                         server = make_server(args.project, args.timeout)
