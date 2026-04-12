@@ -1,6 +1,6 @@
 # proof-step-graph
 
-Extract structured **proof step graphs** from Lean 4 tactic proofs via [PyPantograph](https://github.com/lenianiva/PyPantograph).
+Extract structured **proof step graphs** from Lean 4 tactic proofs via [PyPantograph](https://github.com/stanford-centaur/PyPantograph).
 
 A proof step graph is a bipartite DAG where **goal nodes** and **tactic nodes** alternate:
 - Goal -> Tactic edges represent a tactic being applied to a goal
@@ -16,7 +16,7 @@ A proof step graph is a bipartite DAG where **goal nodes** and **tactic nodes** 
 **Prerequisites:** [elan](https://github.com/leanprover/elan) (Lean toolchain manager), [uv](https://docs.astral.sh/uv/) (Python package manager).
 
 ```bash
-git clone --recurse-submodules <repo-url>
+git clone https://github.com/jiayiw005/proof-step-graph.git
 cd proof-step-graph
 bash scripts/setup.sh
 ```
@@ -151,7 +151,7 @@ proof-step-graph/
   proof_evals/            # Analysis & visualization notebooks
   scripts/
     setup.sh              # One-command setup
-  PyPantograph/           # Git submodule — Lean 4 REPL server
+  PyPantograph/           # Vendored — Lean 4 REPL server
   lakefile.toml           # Lean project config (pins Mathlib version)
   pyproject.toml          # Python project config
 ```
